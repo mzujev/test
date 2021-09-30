@@ -81,5 +81,4 @@ ADD entrypoint.sh /entrypoint.sh
 
 EXPOSE 6379
 
-#ENTRYPOINT /entrypoint.sh redis-server --requirepass qwerty --daemonize yes --pidfile /var/run/redis-server.pid
 ENTRYPOINT ["/entrypoint.sh","redis-server","--requirepass qwerty","--pidfile /var/run/redis-server.pid"]
