@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  docker_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.168.0.0/24
+
+services:
+
+  asterisk:
+    build: asterisk/
+    volumes:
+      - $PWD/asterisk/etc/asterisk/:/etc/asterisk
+      - $PWD/sounds:/tmp/sounds
+    network_mode: host
+
+  redis:
+    build: redis/
+    volumes:
+      - $PWD/sounds:/tmp/sounds
+    ports:
+      - 6379:6379
+    networks:
+      - docker_net
+
+  ari:
+    build: ari/
+    depends_on:
+      - asterisk
+      - redis
+    networks:
+      - docker_net
+    restart: unless-stopped
+

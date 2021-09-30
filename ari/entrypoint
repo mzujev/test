@@ -1,0 +1,22 @@
+import ari
+import redis
+
+client = ari.connect('http://172.168.0.1:8088/','test','qwerty')
+radish = redis.Redis(host='redis', port=6379, password="qwerty")
+
+def onstart(obj, ev):
+	channel = obj.get("channel")
+
+	file = radish.spop("sounds")
+
+	if (file):
+		client.channels.setChannelVar(channelId=channel.json.get("id"),variable="FILE",value=file)
+	else:
+		client.channels.setChannelVar(channelId=channel.json.get("id"),variable="CAUSE",value=3)
+		
+	channel.continueInDialplan()
+
+client.on_channel_event('StasisStart',onstart)
+
+client.run(apps="test")
+
